@@ -8,5 +8,5 @@ license: CC-BY-4.0
 authors:
   - family-names: Thalluri
     given-names: Advatiya
-repository-code: "https://github.com/maximusrufus/extremal-values-registry"
+repository-code: "https://github.com/extremal-values-registry/extremal-values-registry"
 abstract: "A registry of best-known values for extremal problems: one entry per problem variant, with definition, current value, source, superseded chain and verifier."

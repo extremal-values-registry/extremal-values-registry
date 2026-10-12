@@ -15,7 +15,7 @@ instead of copying a number that goes stale.
 ## 60-second tour
 
 ```
-git clone https://github.com/maximusrufus/extremal-values-registry
+git clone https://github.com/extremal-values-registry/extremal-values-registry
 cd extremal-values-registry
 python tools/validate.py                       # 322 entries, 1 with certificates, 231 claims: OK
 cd certificates/third_autocorrelation_abs_inside
@@ -57,7 +57,7 @@ Constants in Mathematics table, EinsteinArena, and two AlphaEvolve result sets):
 
 This registry holds **322 entries** (290 current, 18 unclear, 14 malformed) and **231 priority
 claims** linked to entry ids. To audit your own table, use
-the sibling [`freshcheck`](https://github.com/maximusrufus/freshcheck) repository (same owner; the registry accepts its row format via `tools/check_freshness.py`).
+the sibling [`freshcheck`](https://github.com/extremal-values-registry/freshcheck) repository (same owner; the registry accepts its row format via `tools/check_freshness.py`).
 
 ## What makes an entry a fact
 
