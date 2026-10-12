@@ -15,7 +15,7 @@ instead of copying a number that goes stale.
 ## 60-second tour
 
 ```
-git clone <this repository>
+git clone https://github.com/maximusrufus/extremal-values-registry
 cd extremal-values-registry
 python tools/validate.py                       # 322 entries, 1 with certificates, 231 claims: OK
 cd certificates/third_autocorrelation_abs_inside
