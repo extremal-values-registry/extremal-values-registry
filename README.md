@@ -1,28 +1,113 @@
-# Extremal values registry (v0)
+# Extremal Values Registry
 
-A registry of best-known values for extremal problems: one entry per problem **variant**,
-holding the exact definition, the current best value, the construction or certificate,
-the verifier, the date and primary source, and the chain of values it superseded. Think of
-OEIS, but for best-known bounds. Each entry has a stable id (`EV-000001`, ...) and lists the
-names that benchmarks and leaderboards use for the same variant, so a benchmark can pin
-an entry id instead of copying a number that goes stale.
+**A quarter of the "best known" values in AI-math benchmarks are already beaten. This registry tracks the real frontier.**
 
-Version 0 comes from a published literature audit of five "best known" tables (two
-AlphaEvolve result sets, HorizonMath, the Optimization Constants in Mathematics table,
-EinsteinArena). Every audited row is either an entry or an alias of one. Where the audit
-found a row stale, the entry holds the audited value and the listed value is in
-`superseded[]`. The audit's priority-claims table is in `data/priority_claims.jsonl`, with
-each claim linked to entry ids where the variant is identified. One entry (the
-maximum-of-absolute-value third autocorrelation constant, EV-000004) carries an exact
-certificate and verifier in this repository.
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.23326558-blue)](https://doi.org/10.5281/zenodo.23326558)
+![License: CC BY 4.0 + MIT](https://img.shields.io/badge/license-CC%20BY%204.0%20%2B%20MIT-green)
+![entries: 322](https://img.shields.io/badge/entries-322-informational)
+![verified certificates: 1](https://img.shields.io/badge/verified%20certificates-1-success)
+
+One entry per problem **variant**: the exact definition, the current best value, the source,
+the chain of values it superseded, and the names that benchmarks and leaderboards use for
+it. Think of OEIS, but for best-known bounds. A benchmark can pin an entry id (`EV-000004`)
+instead of copying a number that goes stale.
+
+## 60-second tour
+
+```
+git clone <this repository>
+cd extremal-values-registry
+python tools/validate.py                       # 322 entries, 1 with certificates, 231 claims: OK
+cd certificates/third_autocorrelation_abs_inside
+python -I verify.py construction.json          # exact check, under a second
+```
+
+One entry, as a card:
+
+| | |
+|---|---|
+| **Id** | `EV-000004` |
+| **Variant** | Third autocorrelation constant, signed f, maximum of the absolute value |
+| **Definition** | C = the largest constant with max_t abs((f*f)(t)) >= C (int f)^2 for every real f supported on [-1/4, 1/4]. Any explicit f gives an upper bound; the entry records the best one. |
+| **Direction** | min (dimensionless ratio) |
+| **Current value** | **1.4630716** (upper bound), exact rational certificate, verified 2026-10-12 |
+| **Source** | this registry, `certificates/third_autocorrelation_abs_inside` (300-cell step function) |
+| **Superseded chain** | 1.4993 (prior bound) -> 1.4688 (arXiv 2511.02864, 2025-11-03) -> **1.4630716** |
+| **Aliases** | `B3_C3prime_upper` (notebook table), `6.2_C64_signed_upper` (paper table) |
+| **Conflation note** | Not the same variant as the one scored by benchmark validators (values near 1.449-1.4557). See below. |
+
+Every entry is a line of `data/entries.jsonl`; `python tools/export.py --out dist` renders
+a CSV and a static HTML page per entry.
+
+## Why it exists
+
+Our published audit (https://doi.org/10.5281/zenodo.23324073) checked five "best known"
+tables used to evaluate and report AI-driven mathematics (HorizonMath, the Optimization
+Constants in Mathematics table, EinsteinArena, and two AlphaEvolve result sets):
+
+- **69 of 268 targets (25.7%)** are superseded or not scoreable as written.
+- **48 of 231 AI-discovery improvement claims (20.8%)** had an equal-or-better value published
+  before the claim; **17 (7.4%)** came from a third party the claimant did not cite.
+- Correcting **five** stale values on one public arena leaderboard reorders its top 10
+  (**7 reversals**), and **57%** of recorded "beats" sat on stale rows.
+- **603 of 603** public records re-scored with their benchmarks' own validators were valid:
+  the records are fine, the reference values are what rot.
+- Classical OR libraries (TSPLIB, QAPLIB, CVRPLIB, MIPLIB, OR-Library) showed **0 stale rows
+  of 158**. The decay is specific to young AI-era tables, which is why they need a registry.
+
+This registry holds **322 entries** (290 current, 18 unclear, 14 malformed) and **231 priority
+claims** linked to entry ids. To audit your own table, use
+the sibling `freshcheck` repository (same owner; the registry accepts its row format via `tools/check_freshness.py`).
+
+## What makes an entry a fact
 
 **An entry is a fact only when its verifier passes. Until then it is a sourced claim.**
+Today one entry carries an exact certificate: the signed third-autocorrelation constant,
+upper bound 1.4688 -> 1.4630716, checked with `python -I verify.py construction.json`
+(exact rational arithmetic, under a second). The other 321 rest on a cited primary source
+with a verbatim quote (`verifier_kind: external`). A superseding value must be strictly
+better in the entry's direction, for the same variant.
 
-## Citation and DOI
+## Known conflations
 
-Concept DOI (always the newest version): https://doi.org/10.5281/zenodo.23326558
-Version 0.1.0 DOI (exact values as published 2026-10-13): https://doi.org/10.5281/zenodo.23326559
-Derived from the audit data at https://doi.org/10.5281/zenodo.23324073.
+Benchmarks routinely give two different problems the same name. Example: the third
+autocorrelation constant has a *signed* variant (absolute value inside the maximum,
+EV-000004, bound 1.4630716) and a variant with the absolute value outside the maximum, which
+benchmark validators score (values near 1.449-1.4557). Numbers from one are not records
+for the other. Each entry carries a `conflation_note`, and `SCHEMA.md` explains the rule.
+
+## How to cite
+
+Plain: Thalluri, A. (2026). *Extremal Values Registry* (v0.1.0). Zenodo.
+https://doi.org/10.5281/zenodo.23326559 (concept DOI, always the newest version:
+https://doi.org/10.5281/zenodo.23326558). To cite one entry: "Extremal Values Registry,
+EV-000004 (v0.1.0)". Ids are permanent.
+
+```bibtex
+@dataset{thalluri2026extremal,
+  author    = {Thalluri, Advatiya},
+  title     = {Extremal Values Registry},
+  year      = {2026},
+  version   = {0.1.0},
+  publisher = {Zenodo},
+  doi       = {10.5281/zenodo.23326559},
+  url       = {https://doi.org/10.5281/zenodo.23326559}
+}
+```
+
+The derived audit data: https://doi.org/10.5281/zenodo.23324073. A machine-readable
+`CITATION.cff` is included.
+
+## How to propose an entry or supersession
+
+1. Write `def.json` (problem family, variant name, definition, direction, normalisation) and
+   gather the primary source, a verbatim quote, and a certificate plus verifier if you have one.
+2. Run `python tools/propose.py --definition def.json --value V --certificate construction.json --verifier verify.py --citation "..." --url ... --source-date YYYY-MM-DD --quote "..."`.
+   It checks identity, strict improvement and the verifier, then writes a ready pull request
+   under `proposals/`. It never commits or pushes.
+3. Open the pull request with the generated `PR_BODY.md`. CI re-runs everything in a clean
+   container. Rules, disputes and review: `CONTRIBUTING.md`. Offline demo:
+   `python examples/sample_pr/run.py`.
 
 ## Layout
 
@@ -31,74 +116,19 @@ schema.json, SCHEMA.md      entry format and field meanings (incl. the conflatio
 data/entries.jsonl          the registry, one entry per line
 data/priority_claims.jsonl  priority-claims audit, linked to entry ids
 certificates/               construction files and verifiers
-tools/validate.py           schema, id uniqueness, sha256, runs every verifier
-tools/export.py             CSV + static HTML index (dist/)
-tools/check_freshness.py    rows CSV (freshcheck format) -> proposed diff, never silent writes
-tools/seed_from_audit.py    how v0 was built from the audit tables (--src <dir>)
+tools/                      validate, export, propose, check_freshness, snapshot, ...
+examples/quickstart.md      the commands above, with output
 tests/                      pytest on fixtures
 ```
 
-```
-python tools/validate.py                      # exit 0 when every check and verifier passes
-python tools/export.py --out dist             # dist/entries.csv, dist/index.html, dist/entries/*.html
-python tools/check_freshness.py rows_2026-11-01.csv          # prints a diff, writes nothing
-python tools/check_freshness.py rows_2026-11-01.csv --apply  # writes after printing the diff
-python -m pytest -q
-```
-
-Stdlib only (Python 3.9+); pytest for the tests.
-
-## How to cite an entry
-
-Cite the id and the registry version, e.g. "Extremal values registry, EV-000004 (v0,
-checked 2026-10-12)". Ids are permanent. A superseded value stays in the entry's chain; an
-entry found to merge two variants is split into new ids, and the old id's notes point to them.
-
-## Proposing an entry or a supersession
-
-Short version: `python tools/propose.py ...` builds a checked pull request for you; see
-`CONTRIBUTING.md` (rules, merge requirement, disputes), `DURABILITY.md` (mirrors, weekly
-snapshots, governance) and `SUCCESSION.md` (running everything from a clean machine).
-The manual route:
-
-Open a pull request that changes `data/entries.jsonl` and includes:
-
-1. **Source**: citation, URL and date of the primary source (paper PDF, canonical table, or
-   the authors' own paper), with a verbatim quote of the value in `notes`.
-2. **Certificate**: the construction (or proof certificate) under `certificates/<name>/`,
-   with its sha256 in the entry.
-3. **Verifier**: a command that prints the value from the certificate; exact arithmetic
-   where possible (`verifier_kind: exact`), otherwise a stated tolerance.
-4. A passing `python tools/validate.py` and `python -m pytest -q`.
-
-A supersession must be strictly better in the entry's direction and for the same variant
-(same functional, domain and normalisation). If it is a different variant, propose a new
-entry and add a conflation note to both. Literature checks in the freshcheck row format can
-be turned into a proposed diff with `tools/check_freshness.py`.
-
-## Verdict standard
-
-- **STALE** (a supersession) needs one of: (a) a verbatim quote of the better value from a
-  primary source that was opened (paper PDF, canonical table, authors' own paper), with URL
-  and date; or (b) a public construction re-scored offline with the benchmark's own
-  validator, with the command and output saved (recorded as `value_kind: record`).
-- A snippet, abstract-only hit, blog, tweet or leaderboard cell alone is **STALE-LEADERBOARD**
-  or **UNCLEAR**, never STALE; it does not change `current_value`.
-- **MALFORMED**: the listed value is not a scoreable best-known value (a proven bound stored
-  as a target, a range string, a count).
-- **UNCLEAR**: primary source unreachable, unrefereed claim to a major open problem, or
-  conflicting sources.
-- **CURRENT**: no superseding primary source found by two independent passes.
-- "Better" means strictly better in the variant's direction; equal is CURRENT.
+Stdlib only (Python 3.9+); pytest for the tests. See also `DURABILITY.md` (mirrors, weekly
+snapshots) and `SUCCESSION.md`.
 
 ## Known limits of v0
 
-- 47 entries have `direction: unstated` because the source table does not say and it was
-  not inferred by guessing. Many `source_label` definitions still point to the source row
-  instead of stating the functional; transcribing them is the main v0 to v1 task.
-- Only one entry has a certificate here; all other values rest on their cited sources
-  (`verifier_kind: external`).
-- Values are as stated in the sources: closed forms and qualified statements are strings.
+- 47 entries have `direction: unstated` because the source table does not say; it was not guessed.
+- Many definitions still point at the source row instead of stating the functional.
+- Only one entry has a certificate here; values are as stated in their sources.
 
 ## Licence
 

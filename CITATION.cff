@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "If you use this registry, please cite it as below."
+title: "Extremal Values Registry"
+version: 0.1.0
+doi: 10.5281/zenodo.23326559
+date-released: 2026-10-13
+license: CC-BY-4.0
+authors:
+  - family-names: Thalluri
+    given-names: Advatiya
+repository-code: "https://github.com/maximusrufus/extremal-values-registry"
+abstract: "A registry of best-known values for extremal problems: one entry per problem variant, with definition, current value, source, superseded chain and verifier."

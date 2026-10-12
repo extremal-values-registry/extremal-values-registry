@@ -1,0 +1,5 @@
+Description:
+A registry of best-known values for extremal problems in mathematics: one entry per problem variant, with sources, superseded chains and verifiable certificates.
+
+Topics:
+mathematics, benchmarks, reproducibility, extremal-combinatorics, optimization, bounds, dataset, research-data, provenance, ai-evaluation

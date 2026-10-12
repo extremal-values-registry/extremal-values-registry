@@ -15,7 +15,7 @@
   "certificate": {
     "file": "certificates/third_autocorrelation_abs_inside/construction.json",
     "verifier_file": "certificates/third_autocorrelation_abs_inside/verify.py",
-    "sha256": "44f3f2b63b0d698dd5f279661d4be7077ca6703d62ea7ae6e2b2945e0f001e1c",
+    "sha256": "51f864ee95205f06b98923c382d23cb3dfde5f0d4208a4c591bad015e5908a0e",
     "verifier_command": "python -I certificates/third_autocorrelation_abs_inside/verify.py certificates/third_autocorrelation_abs_inside/construction.json",
     "verifier_kind": "exact",
     "verified_date": "2026-10-12",
