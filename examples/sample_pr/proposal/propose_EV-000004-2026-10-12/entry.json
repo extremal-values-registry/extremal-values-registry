@@ -1,0 +1,63 @@
+{
+  "id": "EV-000004",
+  "problem_family": "Autocorrelation inequalities",
+  "variant_name": "Third autocorrelation constant, signed f, maximum of the absolute value",
+  "definition": {
+    "text": "C = the largest constant with max_t |(f*f)(t)| >= C (int f)^2 for every real f supported on [-1/4,1/4]. Any explicit f gives the upper bound C <= max_t |(f*f)(t)| / (int f)^2. Entries record the best upper bound.",
+    "latex": "C=\\inf_{f:\\ \\operatorname{supp}f\\subseteq[-\\frac14,\\frac14],\\ \\int f\\ne0}\\frac{\\max_t\\left|(f*f)(t)\\right|}{(\\int f)^2}",
+    "status": "curated"
+  },
+  "domain": "real-valued functions on [-1/4,1/4]",
+  "direction": "min",
+  "units_or_normalisation": "dimensionless ratio",
+  "current_value": 1.4630715826075593,
+  "value_kind": "bound",
+  "certificate": {
+    "file": "certificates/third_autocorrelation_abs_inside/construction.json",
+    "verifier_file": "certificates/third_autocorrelation_abs_inside/verify.py",
+    "sha256": "44f3f2b63b0d698dd5f279661d4be7077ca6703d62ea7ae6e2b2945e0f001e1c",
+    "verifier_command": "python -I certificates/third_autocorrelation_abs_inside/verify.py certificates/third_autocorrelation_abs_inside/construction.json",
+    "verifier_kind": "exact",
+    "verified_date": "2026-10-12",
+    "value_pattern": "C\\(f\\) = ([0-9.eE+-]+)",
+    "tolerance": 1e-12
+  },
+  "source": {
+    "citation": "This registry, certificate certificates/third_autocorrelation_abs_inside (300-cell step function; exact rational evaluation)",
+    "url": null,
+    "date": "2026-10-12",
+    "refereed": false
+  },
+  "superseded": [
+    {
+      "value": 1.4993,
+      "source": "prior bound cited by the v2 paper for problem 6.4(a)",
+      "url": null,
+      "date": null
+    },
+    {
+      "value": 1.4688,
+      "source": "v2 paper, problem 6.4(a)",
+      "url": "https://arxiv.org/abs/2511.02864",
+      "date": "2025-11-03"
+    }
+  ],
+  "aliases": [
+    {
+      "scheme": "AlphaEvolve-notebook",
+      "id": "B3_C3prime_upper",
+      "audit_table": "alphaevolve_notebook_audit",
+      "audit_verdict": "CURRENT"
+    },
+    {
+      "scheme": "AlphaEvolve-v2-paper",
+      "id": "6.2_C64_signed_upper",
+      "audit_table": "alphaevolve_v2_paper_audit",
+      "audit_verdict": "CURRENT"
+    }
+  ],
+  "status": "current",
+  "last_checked": "2026-10-12",
+  "conflation_note": "Not the same variant as the absolute-value-outside-the-maximum problem scored by benchmark validators (values near 1.449-1.4557). The 2025 notebook calls this one C3' (1.4688); the v2 paper calls it problem 6.4(a). Follow-on papers and leaderboards target the other variant.",
+  "notes": "Quote: C(f) = 1.4630715826075593 (exact rational)"
+}

@@ -1,0 +1,6 @@
+$ python tools/propose.py ... --entry EV-000004
+verifier (isolated): PASS, prints 1.4630715826075593
+identity rule: OK
+validate: OK
+supersede EV-000004 written to examples\sample_pr\proposal\propose_EV-000004-2026-10-12
+exit 0

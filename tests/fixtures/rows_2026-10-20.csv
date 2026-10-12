@@ -1,0 +1,4 @@
+benchmark,problem_id,pinned_value,pinned_commit,direction,search_date,searcher,verdict,better_value,source,source_date,source_kind,queries_run,notes
+Optimization Constants in Mathematics,29|lower,40,v1,max,2026-10-20,s1,STALE,41,arXiv:2610.00001,2026-10-15,primary,kissing 5,"Quote: we construct 41 spheres"
+HorizonMath,toy_mean,2.0,v1,min,2026-10-20,s1,STALE,1.5,https://example.org/blog,2026-10-10,secondary,toy,"blog says 1.5"
+HorizonMath,no_such_problem,1,v1,min,2026-10-20,s1,CURRENT,,,,,q,

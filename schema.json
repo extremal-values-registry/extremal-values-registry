@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "extremal-values-registry/entry/v0",
+  "title": "Extremal values registry entry",
+  "type": "object",
+  "required": ["id", "problem_family", "variant_name", "definition", "domain", "direction",
+               "units_or_normalisation", "current_value", "value_kind", "certificate", "source",
+               "superseded", "aliases", "status", "last_checked", "conflation_note", "notes"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "pattern": "^EV-[0-9]{6}$"},
+    "problem_family": {"type": "string", "minLength": 1},
+    "variant_name": {"type": "string", "minLength": 1},
+    "definition": {
+      "type": "object",
+      "required": ["text", "latex", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "text": {"type": "string", "minLength": 1},
+        "latex": {"type": "string"},
+        "status": {"enum": ["curated", "source_label"]}
+      }
+    },
+    "domain": {"type": "string"},
+    "direction": {"enum": ["min", "max", "unstated"]},
+    "units_or_normalisation": {"type": "string"},
+    "current_value": {"type": ["number", "string", "null"]},
+    "value_kind": {"enum": ["bound", "exact", "record"]},
+    "certificate": {
+      "type": "object",
+      "required": ["file", "sha256", "verifier_command", "verifier_kind", "verified_date"],
+      "additionalProperties": false,
+      "properties": {
+        "file": {"type": ["string", "null"]},
+        "verifier_file": {"type": ["string", "null"]},
+        "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+        "verifier_command": {"type": ["string", "null"]},
+        "verifier_kind": {"enum": ["exact", "numeric", "external"]},
+        "verified_date": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+        "value_pattern": {"type": ["string", "null"]},
+        "tolerance": {"type": ["number", "null"]}
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["citation", "url", "date", "refereed"],
+      "additionalProperties": false,
+      "properties": {
+        "citation": {"type": ["string", "null"]},
+        "url": {"type": ["string", "null"]},
+        "date": {"type": ["string", "null"]},
+        "refereed": {"type": "boolean"}
+      }
+    },
+    "superseded": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["value", "source", "url", "date"],
+        "additionalProperties": false,
+        "properties": {
+          "value": {"type": ["number", "string"]},
+          "source": {"type": ["string", "null"]},
+          "url": {"type": ["string", "null"]},
+          "date": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "aliases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scheme", "id"],
+        "additionalProperties": false,
+        "properties": {
+          "scheme": {"enum": ["HorizonMath", "OptimizationConstants", "EinsteinArena",
+                              "AlphaEvolve-notebook", "AlphaEvolve-v2-paper", "other"]},
+          "id": {"type": "string", "minLength": 1},
+          "side": {"enum": ["lower", "upper"]},
+          "ranking_number": {"type": "string"},
+          "audit_table": {"type": "string"},
+          "audit_verdict": {"enum": ["CURRENT", "STALE", "STALE-LEADERBOARD", "UNCLEAR", "MALFORMED"]}
+        }
+      }
+    },
+    "status": {"enum": ["current", "unclear", "malformed"]},
+    "last_checked": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
+    "conflation_note": {"type": ["string", "null"]},
+    "notes": {"type": ["string", "null"]}
+  }
+}

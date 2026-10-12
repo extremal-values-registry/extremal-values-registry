@@ -1,0 +1,34 @@
+# Weekly snapshot (DURABILITY.md). Validates, builds a reproducible archive + manifest,
+# attaches both to a dated release; the Zenodo GitHub integration mints a new version DOI
+# for each release, and the mirror job pushes main to the second remote.
+name: snapshot
+
+on:
+  schedule: [{cron: "17 3 * * 1"}]   # Mondays 03:17 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    env: {MIRROR_URL: "${{ secrets.MIRROR_URL }}"}
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: python tools/snapshot.py --out snapshots
+      - name: Dated release (Zenodo archives each release as a new DOI version)
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: |
+          d=$(date -u +%F)
+          gh release create "snapshot-$d" snapshots/registry-$d.tar.gz snapshots/registry-$d.manifest.json \
+            --title "Registry snapshot $d" --notes-file snapshots/registry-$d.manifest.json
+      - name: Push to the second git remote
+        if: env.MIRROR_URL != ''
+        run: git push --mirror "$MIRROR_URL"
+      - name: Ask Software Heritage to archive the repository
+        continue-on-error: true
+        run: curl -fsS -X POST "https://archive.softwareheritage.org/api/1/origin/save/git/url/${{ github.server_url }}/${{ github.repository }}/"

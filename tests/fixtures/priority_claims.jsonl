@@ -1,0 +1,1 @@
+{"claim_id": "T-01", "claimant": "Toy paper", "claim_date": "2026-01-01", "problem": "Toy count", "direction": "maximize", "claimed_value": "40", "verdict": "NEW", "verdict_class": "NEW", "preexisting_value": null, "preexisting_source": null, "preexisting_date": null, "lag_days": null, "entry_ids": ["EV-000002"], "notes": null}

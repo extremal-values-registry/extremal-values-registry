@@ -1,0 +1,99 @@
+# Runs on every pull request. Merging needs these checks green plus one approving review
+# (CONTRIBUTING.md; set "Require status checks: validate, verifiers, literature" and
+# "Require 1 approving review" in the branch protection of main).
+name: verify
+
+on:
+  pull_request:
+    paths: ["data/**", "certificates/**", "tools/**", "schema.json", "tests/**"]
+
+permissions:
+  contents: read
+  pull-requests: write   # to add the needs-literature-check label
+  checks: write
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install pytest
+      - name: Schema, ids, aliases, sha256, every verifier
+        run: python tools/validate.py | tee validate.txt
+      - name: Identity rule against the base branch
+        run: |
+          git show "origin/${{ github.base_ref }}:data/entries.jsonl" > base_entries.jsonl || : > base_entries.jsonl
+          python tools/pr_checks.py identity --base base_entries.jsonl | tee identity.txt
+      - run: python -m pytest -q
+      - uses: actions/upload-artifact@v4
+        with: {name: base-entries, path: base_entries.jsonl}
+      - name: Summary
+        if: always()
+        run: |
+          { echo "## validate"; echo '```'; cat validate.txt identity.txt 2>/dev/null; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+  verifiers:
+    # Every changed entry's verifier_command, re-run on its certificate in a clean container
+    # with no network and only the certificate directory mounted (read-only).
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Changed entries
+        run: |
+          git show "origin/${{ github.base_ref }}:data/entries.jsonl" > base_entries.jsonl || : > base_entries.jsonl
+          python3 tools/pr_checks.py changed --base base_entries.jsonl > changed.txt
+          cat changed.txt
+      - name: Re-run verifiers in a clean container
+        run: |
+          set -euo pipefail
+          docker run --rm --network none -v "$PWD:/src:ro" python:3.12-slim \
+            sh -c 'cp -r /src /work && cd /work && python tools/pr_checks.py verify --base base_entries.jsonl' \
+            | tee verifiers.txt
+      - name: Summary
+        if: always()
+        run: |
+          { echo "## verifiers (clean container, no network)"; echo '```'; cat verifiers.txt 2>/dev/null; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+  literature:
+    # Two-pass freshness check on changed values (free indexes only). Without the
+    # LITERATURE_KEY secret the PR is labelled needs-literature-check instead of failing.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Two passes
+        id: lit
+        env:
+          LITERATURE_KEY: ${{ secrets.LITERATURE_KEY }}
+        run: |
+          git show "origin/${{ github.base_ref }}:data/entries.jsonl" > base_entries.jsonl || : > base_entries.jsonl
+          ids=$(python tools/pr_checks.py changed --base base_entries.jsonl | tr '\n' ' ')
+          set +e
+          python tools/literature_check.py --ids $ids --out literature_rows.csv | tee literature.txt
+          code=${PIPESTATUS[0]}
+          set -e
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          [ "$code" = 0 ] || [ "$code" = 2 ] || [ "$code" = 3 ]
+      - name: Label when no key
+        if: steps.lit.outputs.code == '3'
+        continue-on-error: true   # fork PRs get a read-only token; the summary still says it
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: gh pr edit ${{ github.event.pull_request.number }} --add-label needs-literature-check
+      - name: Label when candidates need reading
+        if: steps.lit.outputs.code == '2'
+        continue-on-error: true   # fork PRs get a read-only token; the summary still says it
+        env: {GH_TOKEN: "${{ github.token }}"}
+        run: gh pr edit ${{ github.event.pull_request.number }} --add-label literature-candidates
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: {name: literature-rows, path: literature_rows.csv, if-no-files-found: ignore}
+      - name: Summary
+        if: always()
+        run: |
+          { echo "## literature check (pass 1 OpenAlex, pass 2 arXiv)"; echo '```'; cat literature.txt 2>/dev/null; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
