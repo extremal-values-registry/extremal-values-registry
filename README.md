@@ -57,7 +57,7 @@ Constants in Mathematics table, EinsteinArena, and two AlphaEvolve result sets):
 
 This registry holds **322 entries** (290 current, 18 unclear, 14 malformed) and **231 priority
 claims** linked to entry ids. To audit your own table, use
-the sibling `freshcheck` repository (same owner; the registry accepts its row format via `tools/check_freshness.py`).
+the sibling [`freshcheck`](https://github.com/maximusrufus/freshcheck) repository (same owner; the registry accepts its row format via `tools/check_freshness.py`).
 
 ## What makes an entry a fact
 
