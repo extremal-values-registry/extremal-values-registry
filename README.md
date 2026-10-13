@@ -4,7 +4,7 @@
 
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.23326558-blue)](https://doi.org/10.5281/zenodo.23326558)
 ![License: CC BY 4.0 + MIT](https://img.shields.io/badge/license-CC%20BY%204.0%20%2B%20MIT-green)
-![entries: 799](https://img.shields.io/badge/entries-799-informational)
+![entries: 1034](https://img.shields.io/badge/entries-1034-informational)
 ![verified certificates: 1](https://img.shields.io/badge/verified%20certificates-1-success)
 
 One entry per problem **variant**: the exact definition, the current best value, the source,
@@ -17,7 +17,7 @@ instead of copying a number that goes stale.
 ```
 git clone https://github.com/extremal-values-registry/extremal-values-registry
 cd extremal-values-registry
-python tools/validate.py                       # 799 entries, 1 with certificates, 231 claims: OK
+python tools/validate.py                       # 1034 entries, 1 with certificates, 231 claims: OK
 cd certificates/third_autocorrelation_abs_inside
 python -I verify.py construction.json          # exact check, under a second
 ```
@@ -56,10 +56,12 @@ Constants in Mathematics table, EinsteinArena, and two AlphaEvolve result sets):
 - Classical OR libraries (TSPLIB, QAPLIB, CVRPLIB, MIPLIB, OR-Library) showed **0 stale rows
   of 158**. The decay is specific to young AI-era tables, which is why they need a registry.
 
-This registry holds **799 entries** (735 current, 50 unclear, 14 malformed) and **231 priority
+This registry holds **1034 entries** (970 current, 50 unclear, 14 malformed) and **231 priority
 claims** linked to entry ids: the 322 audited benchmark variants, 405 Erdős problems from the
 AI-contributions wiki (frozen 2026-06-30) and the 72 cells of the classical two-colour Ramsey
-table R(k,l), k <= l <= 15, from Radziszowski's survey DS1. To audit your own table, use
+table R(k,l), k <= l <= 15, from Radziszowski's survey DS1, 144 cells (n <= 50) of four tables
+of Erich Friedman's Packing Center, and 91 new cells (plus 6 cross-linked) of Henry Cohn's kissing-number
+and sphere-packing tables, dimensions 1-48. To audit your own table, use
 the sibling [`freshcheck`](https://github.com/extremal-values-registry/freshcheck) repository (same owner; the registry accepts its row format via `tools/check_freshness.py`).
 
 ## What makes an entry a fact
@@ -67,7 +69,7 @@ the sibling [`freshcheck`](https://github.com/extremal-values-registry/freshchec
 **An entry is a fact only when its verifier passes. Until then it is a sourced claim.**
 Today one entry carries an exact certificate: the signed third-autocorrelation constant,
 upper bound 1.4688 -> 1.4630716, checked with `python -I verify.py construction.json`
-(exact rational arithmetic, under a second). The other 798 rest on a cited primary source
+(exact rational arithmetic, under a second). The other 1033 rest on a cited primary source
 with a verbatim quote (`verifier_kind: external`). A superseding value must be strictly
 better in the entry's direction, for the same variant.
 
@@ -103,7 +105,7 @@ under `docs/badge/`, so a benchmark README can show whether the value it uses is
 | `badge/table/<slug>.json` | `N/M current · <date>` for one audited benchmark table |
 | `badge/source/<slug>.json` | `N entries · M resolved/exact` for an ingested source table |
 | `badge/provenance.json` | `N AI-involved · M definition-checked` |
-| `badge/registry.json` | `799 entries · <date>` |
+| `badge/registry.json` | `1034 entries · <date>` |
 
 Replace `<PAGES_BASE>` with the registry's GitHub Pages URL (it changes when the repository
 moves to its organisation, so it is not hard-coded here):

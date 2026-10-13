@@ -28,7 +28,12 @@ def slug(name):
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 
 
-SOURCE_SCHEMES = {"ErdosProblems": "erdos-ai-contributions-wiki", "DS1": "ds1-small-ramsey-numbers"}
+SOURCE_SCHEMES = {
+    "ErdosProblems": "erdos-ai-contributions-wiki",
+    "DS1": "ds1-small-ramsey-numbers",
+    "PackingCenter": "packing-center",
+    "Cohn": "cohn-sphere-packing-kissing",
+}
 
 
 def entry_badge(e):

@@ -26,7 +26,7 @@ direction are two entries, even when the literature gives them one name.
 | `certificate.value_pattern`, `tolerance`, `verifier_file` | optional | Regex with one group that extracts the value from verifier output; absolute tolerance; the verifier script's path. |
 | `source` | `{citation, url, date, refereed}` | Primary source of the current value. `refereed` is true only when the audit notes say so. |
 | `superseded` | list of `{value, source, url, date}` | Earlier or stale values for this variant, worst first. Values listed by benchmarks that the audit found stale are here, with the benchmark named as the source. |
-| `aliases` | list of `{scheme, id, side?, ranking_number?, audit_table?, audit_verdict?}` | Names used elsewhere: `HorizonMath` problem id, `OptimizationConstants` table id (with `side` lower/upper), `EinsteinArena` problem slug or title (with `ranking_number`), `AlphaEvolve-notebook` / `AlphaEvolve-v2-paper` row ids, `ErdosProblems` problem number, `DS1` cell (e.g. `R(5,5)`). No alias may belong to two entries. |
+| `aliases` | list of `{scheme, id, side?, ranking_number?, audit_table?, audit_verdict?}` | Names used elsewhere: `HorizonMath` problem id, `OptimizationConstants` table id (with `side` lower/upper), `EinsteinArena` problem slug or title (with `ranking_number`), `AlphaEvolve-notebook` / `AlphaEvolve-v2-paper` row ids, `ErdosProblems` problem number, `DS1` cell (e.g. `R(5,5)`), `PackingCenter` cell (`<table> n=<n>`, e.g. `cirinsqu n=7`), `Cohn` cell (`kissing-numbers d=<n>` or `sphere-packing d=<n>`, with `side` when it names one bound of a cell). No alias may belong to two entries. |
 | `status` | `current` \| `unclear` \| `malformed` | `unclear`: conflicting sources, unreachable primary source, or unrefereed claim to a major problem. `malformed`: the source row is not a scoreable best-known value. |
 | `last_checked` | date | Last literature check (see `tools/check_freshness.py`). |
 | `conflation_note` | string \| null | Present when the literature or benchmarks confuse this variant with another. |
@@ -83,3 +83,14 @@ Ingested source tables:
   per cell R(k,l), 3 <= k <= l. Exact cells are `exact`; the rest are `"L <= R(k,l) <= U"`
   strings (`?` where the table gives no bound). When Table Ib improves a Table Ia upper bound, the
   Table Ia bound is in `superseded`.
+- **Erich Friedman's Packing Center** (circles in squares, circles in circles, equilateral
+  triangles in squares; squares in squares from David Ellsworth's updated table that the Packing
+  Center links): `tools/ingest_packing_center.py`. One entry per n <= 50 with a value. Cells the
+  page marks "Proved" or "Trivial." are `exact`, the rest `record`. Truncated decimals are kept as
+  printed, as strings ending in `+` (the true value is slightly larger). Record holder and date are
+  quoted in `provenance.basis`; `first_public_date` is the date of the first clause.
+- **Henry Cohn's tables of kissing numbers and sphere packing densities**: `tools/ingest_cohn.py`.
+  One entry per dimension 1..48. Proved rows (one value for both bounds) are `exact`; the rest
+  are `"L <= tau_n <= U"` / `"L <= Delta_n <= U"` strings as printed. Cells the registry already
+  held (kissing d = 5, 6, 9, 11; density d = 10) get a `Cohn` alias and a `conflation_note`
+  instead of a new entry; density d = 12 is a new entry cross-linked to the lattice-only entry.
