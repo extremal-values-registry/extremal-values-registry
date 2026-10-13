@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "extremal-values-registry"
+version = "0.1.0"
+description = "A registry of best-known values for extremal problems"
+readme = "README.md"
+requires-python = ">=3.12"
+license = {text = "MIT (code); CC-BY-4.0 (data, see LICENSE-DATA)"}
+authors = [{name = "Advatiya Thalluri"}]
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest"]
+ingest = ["pymupdf"]
+
+[project.urls]
+Repository = "https://github.com/extremal-values-registry/extremal-values-registry"
+
+[project.scripts]
+evr-validate = "validate:main"
+evr-export = "export:main"
+
+[tool.setuptools]
+package-dir = {"" = "tools"}
+py-modules = ["common", "validate", "export", "badges", "check_freshness", "propose", "snapshot", "pr_checks", "literature_check"]

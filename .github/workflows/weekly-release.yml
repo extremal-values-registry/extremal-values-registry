@@ -1,0 +1,53 @@
+# Every Monday: validate, re-export, regenerate badges, commit any change and tag vYYYY.MM.DD.
+# Uses only the built-in GITHUB_TOKEN (contents: write); no secrets.
+# check_freshness.py is not run: it needs a dated rows CSV and has no offline dry mode.
+name: weekly-release
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: weekly-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Validate
+        run: python tools/validate.py
+      - name: Export
+        run: |
+          python tools/export.py
+          python tools/export.py --out docs
+      - name: Badges
+        run: python tools/badges.py
+      - name: Commit and tag
+        run: |
+          set -euo pipefail
+          VERSION="v$(date -u +%Y.%m.%d)"
+          git config user.name "Extremal Values Registry maintainers"
+          git config user.email "maintainers@extremal-values-registry.invalid"
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A
+            git commit -m "Weekly export ${VERSION}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          else
+            echo "no changes to commit"
+          fi
+          git fetch --tags --force
+          if git rev-parse -q --verify "refs/tags/${VERSION}" >/dev/null; then
+            echo "tag ${VERSION} exists; skipping"
+          else
+            git tag -a "${VERSION}" -m "Extremal Values Registry ${VERSION}"
+            git push origin "refs/tags/${VERSION}"
+          fi

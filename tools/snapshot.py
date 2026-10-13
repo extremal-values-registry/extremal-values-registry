@@ -32,6 +32,7 @@ INCLUDE = (
     "CONTRIBUTING.md",
     "DURABILITY.md",
     "SUCCESSION.md",
+    "LICENSE",
     "LICENSE-CODE",
     "LICENSE-DATA",
     "schema.json",

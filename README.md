@@ -39,6 +39,20 @@ One entry, as a card:
 Every entry is a line of `data/entries.jsonl`; `python tools/export.py --out dist` renders
 a CSV and a static HTML page per entry.
 
+## Install
+
+No installation is needed to read or validate the registry: Python 3.12+ and the standard
+library. Clone and run `python tools/validate.py`. For the tests: `pip install pytest`
+(or `pip install -e .[test]`, which also installs the `evr-validate` and `evr-export`
+commands). For re-ingesting the Ramsey survey PDF: `pip install pymupdf`.
+
+## Support
+
+Open an issue: a bug report, a question, or a dispute about an entry (templates in
+`.github/ISSUE_TEMPLATE/`). Maintainers aim to reply within 7 days. Entry disputes are decided
+by the verifier result, not by the maintainer. Releases: `CHANGELOG.md`; a release tagged
+`vYYYY.MM.DD` is cut automatically every Monday.
+
 ## Why it exists
 
 Our published audit (https://doi.org/10.5281/zenodo.23324073) checked five "best known"
@@ -167,7 +181,7 @@ examples/quickstart.md      the commands above, with output
 tests/                      pytest on fixtures
 ```
 
-Stdlib only (Python 3.9+); pytest for the tests. See also `DURABILITY.md` (mirrors, weekly
+Stdlib only (Python 3.12+, tested on 3.12 and 3.13 in CI); pytest for the tests. See also `DURABILITY.md` (mirrors, weekly
 snapshots) and `SUCCESSION.md`.
 
 ## Known limits of v0
@@ -178,5 +192,5 @@ snapshots) and `SUCCESSION.md`.
 
 ## Licence
 
-Data (`data/`, `certificates/*.json`): CC BY 4.0. Code (`tools/`, `tests/`, verifiers): MIT.
-See `LICENSE-DATA` and `LICENSE-CODE`.
+Data (`data/`, `certificates/*.json`): CC BY 4.0 (`LICENSE-DATA`). Code (`tools/`, `tests/`,
+verifiers): MIT (`LICENSE`; `LICENSE-CODE` is the same text).
