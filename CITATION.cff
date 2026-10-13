@@ -10,5 +10,9 @@ license:
 authors:
   - family-names: Thalluri
     given-names: Advatiya
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23326558
+    description: "Concept DOI, all versions"
 repository-code: "https://github.com/extremal-values-registry/extremal-values-registry"
 abstract: "A registry of best-known values for extremal problems: one entry per problem variant, with definition, current value, source, superseded chain and verifier."

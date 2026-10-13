@@ -6,7 +6,8 @@ Checks: every entry against schema.json; ids unique and EV-NNNNNN; aliases not s
 entries; claims link to existing ids; every certificate file exists and its sha256 matches;
 every verifier_command runs on its certificate and prints the registered value (within the
 entry's tolerance; exact certificates default to 1e-12); the provenance, fidelity and
-feasibility rules in SCHEMA.md (see field_rules). Exit 0 when clean, 1 otherwise.
+feasibility rules in SCHEMA.md (see field_rules); for entries that declare
+standard_version, the requirements of docs/STANDARD.md (see standard_rules). Exit 0 when clean, 1 otherwise.
 """
 
 import argparse
@@ -54,6 +55,28 @@ def run_verifier(entry, root):
 
 
 STATUS_VALUES = ("resolved", "open")
+STANDARD_VERSIONS = ("1.0",)
+
+
+def standard_rules(e):
+    """Requirements of docs/STANDARD.md for an entry that declares standard_version."""
+    sv = e.get("standard_version")
+    if sv is None:
+        return []
+    if sv not in STANDARD_VERSIONS:
+        return ["unknown standard_version %r" % sv]
+    errs = []
+    f = e.get("fidelity") or {}
+    if f.get("statement_audit") not in ("self", "independent"):
+        errs.append("standard %s: statement fidelity not audited" % sv)
+    c = e.get("certificate") or {}
+    if not c.get("file") or c.get("verifier_kind") != "exact" or not c.get("verifier_command"):
+        errs.append("standard %s: no exact certificate with a verifier" % sv)
+    if (e.get("provenance") or {}).get("literature_status") == "unknown":
+        errs.append("standard %s: prior-art status unknown" % sv)
+    if e.get("status") != "current":
+        errs.append("standard %s: status is %r, not current" % (sv, e.get("status")))
+    return errs
 
 
 def field_rules(e):
@@ -97,6 +120,7 @@ def validate(entries, claims, root, run=True):
         eid = e.get("id", "?")
         errs += ["%s %s" % (eid, x) for x in check(e, schema)]
         errs += ["%s %s" % (eid, x) for x in field_rules(e)]
+        errs += ["%s %s" % (eid, x) for x in standard_rules(e)]
         if eid in ids:
             errs.append("%s duplicate id" % eid)
         ids.add(eid)

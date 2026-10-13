@@ -136,7 +136,17 @@ Rendered from [`docs/badge/EV-000004.json`](docs/badge/EV-000004.json) as of the
 `python tools/badges.py` regenerates them alone; `python tools/export.py --out docs` refreshes
 them with the pages.
 
+## Verified Value Standard
+
+[`docs/STANDARD.md`](docs/STANDARD.md) defines when a claimed value counts as verified
+progress: four checks (statement fidelity, an independent exact re-check of a certificate,
+prior art at the claim date in two passes, currentness), a fixed verdict vocabulary, a 14-day
+right of reply, error-rate reporting, and a checklist plus the `validate.py` command with which
+a benchmark or platform can self-certify entries (`"standard_version": "1.0"`).
+
 ## How to cite
+
+Full guide for the registry, an entry and a verdict: [`docs/CITING.md`](docs/CITING.md).
 
 Plain: Thalluri, A. (2026). *Extremal Values Registry* (v0.1.0). Zenodo.
 https://doi.org/10.5281/zenodo.23326559 (concept DOI, always the newest version:

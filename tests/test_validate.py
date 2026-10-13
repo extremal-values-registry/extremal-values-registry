@@ -68,3 +68,31 @@ def test_real_certificate_value():
     e = certified[0]
     assert e["direction"] == "min" and e["current_value"] < 1.4688
     assert validate.run_verifier(e, ROOT) is None
+
+
+def test_standard_version_absent_is_fine(reg):
+    rows = read(reg / "entries.jsonl")
+    assert all("standard_version" not in r for r in rows)
+    assert validate.validate(rows, [], str(reg), run=False) == []
+
+
+def test_standard_version_unknown_rejected(reg):
+    rows = read(reg / "entries.jsonl")
+    rows[0]["standard_version"] = "9.9"
+    errs = validate.validate(rows, [], str(reg), run=False)
+    assert any("9.9" in e for e in errs)
+
+
+def test_standard_version_requirements(reg):
+    rows = read(reg / "entries.jsonl")
+    bad = dict(rows[0], standard_version="1.0", fidelity=None, status="unclear")
+    bad["certificate"] = dict(bad["certificate"], file=None, verifier_kind="external")
+    bad["provenance"] = dict(bad["provenance"], literature_status="unknown")
+    errs = validate.standard_rules(bad)
+    for want in ("fidelity", "exact certificate", "prior-art", "not current"):
+        assert any(want in e for e in errs), want
+    good = dict(rows[0], standard_version="1.0", status="current",
+                fidelity={"statement_audit": "independent", "audit_note": "checked"})
+    good["certificate"] = dict(good["certificate"], file="x", verifier_kind="exact", verifier_command="python v.py")
+    good["provenance"] = dict(good["provenance"], literature_status="known_before")
+    assert validate.standard_rules(good) == []
