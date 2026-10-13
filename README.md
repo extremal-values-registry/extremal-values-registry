@@ -82,9 +82,8 @@ formal statement was audited** (`fidelity`: none, self, independent) and, for le
 values, **whether the records satisfy the written definition** (`feasibility`). For the twelve
 EinsteinArena-derived entries every public record in the arena's bulk endpoint
 (`https://einsteinarena.com/api/solutions/best?problem_id=N`) was re-checked against the
-problem's definition, independently of the platform's scorer: the rank-1 Tammes (n=50) record
-fails it (its points sit inside the sphere, under the scorer's norm clamp), and 29 of 52
-prime-number-theorem records exceed the constraint the definition sets. See `SCHEMA.md`.
+problem's definition, independently of the platform's scorer; the detailed results are under
+review with the platform maintainers and will be published when that review concludes. See `SCHEMA.md`.
 
 ## Known conflations
 
