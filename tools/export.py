@@ -2,7 +2,8 @@
 
   python tools/export.py [--entries data/entries.jsonl] [--out dist]
 
-Writes <out>/entries.csv, <out>/index.html and <out>/entries/EV-NNNNNN.html. Stdlib only.
+Writes <out>/entries.csv, <out>/index.html, <out>/entries/EV-NNNNNN.html and the
+shields.io endpoint badges under <out>/badge/ (see tools/badges.py). Stdlib only.
 """
 
 import argparse
@@ -12,6 +13,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from badges import write_badges
 from common import ENTRIES, ROOT, load_jsonl
 
 CSV_COLUMNS = [
@@ -190,6 +192,7 @@ def export(entries, out):
             os.path.join(out, "entries", e["id"] + ".html"), "w", encoding="utf-8"
         ) as fh:
             fh.write(entry_page(e))
+    write_badges(entries, out)
     return len(entries)
 
 

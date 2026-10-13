@@ -76,6 +76,33 @@ EV-000004, bound 1.4630716) and a variant with the absolute value outside the ma
 benchmark validators score (values near 1.449-1.4557). Numbers from one are not records
 for the other. Each entry carries a `conflation_note`, and `SCHEMA.md` explains the rule.
 
+## Badges
+
+Every export also writes [shields.io endpoint](https://shields.io/badges/endpoint-badge) JSON
+under `docs/badge/`, so a benchmark README can show whether the value it uses is still current:
+
+| file | message |
+|---|---|
+| `badge/<id>.json` | `current · 2026-10-12` (green current, yellow unclear, red malformed) |
+| `badge/table/<slug>.json` | `N/M current · <date>` for one audited benchmark table |
+| `badge/registry.json` | `322 entries · <date>` |
+
+Replace `<PAGES_BASE>` with the registry's GitHub Pages URL (it changes when the repository
+moves to its organisation, so it is not hard-coded here):
+
+```markdown
+[![EV-000004](https://img.shields.io/endpoint?url=<PAGES_BASE>/badge/EV-000004.json)](<PAGES_BASE>/entries/EV-000004.html)
+[![alphaevolve_v2_paper_audit](https://img.shields.io/endpoint?url=<PAGES_BASE>/badge/table/alphaevolve-v2-paper-audit.json)](<PAGES_BASE>/index.html)
+[![registry](https://img.shields.io/endpoint?url=<PAGES_BASE>/badge/registry.json)](<PAGES_BASE>/index.html)
+```
+
+Rendered from [`docs/badge/EV-000004.json`](docs/badge/EV-000004.json) as of the last export:
+
+[![EV-000004: current · 2026-10-12](https://img.shields.io/badge/EV--000004-current%20%C2%B7%202026--10--12-green)](docs/badge/EV-000004.json)
+
+`python tools/badges.py` regenerates them alone; `python tools/export.py --out docs` refreshes
+them with the pages.
+
 ## How to cite
 
 Plain: Thalluri, A. (2026). *Extremal Values Registry* (v0.1.0). Zenodo.
@@ -116,7 +143,7 @@ schema.json, SCHEMA.md      entry format and field meanings (incl. the conflatio
 data/entries.jsonl          the registry, one entry per line
 data/priority_claims.jsonl  priority-claims audit, linked to entry ids
 certificates/               construction files and verifiers
-tools/                      validate, export, propose, check_freshness, snapshot, ...
+tools/                      validate, export, badges, propose, check_freshness, snapshot, ...
 examples/quickstart.md      the commands above, with output
 tests/                      pytest on fixtures
 ```
