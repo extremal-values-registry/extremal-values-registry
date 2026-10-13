@@ -34,6 +34,11 @@ CSV_COLUMNS = [
     "superseded_values",
     "aliases",
     "last_checked",
+    "setter_kind",
+    "literature_status",
+    "first_public_date",
+    "statement_audit",
+    "feasibility",
 ]
 
 STYLE = """
@@ -73,7 +78,73 @@ def row_for_csv(e):
             for a in e["aliases"]
         ),
         "last_checked": e["last_checked"],
+        "setter_kind": e["provenance"]["setter_kind"],
+        "literature_status": e["provenance"]["literature_status"],
+        "first_public_date": e["provenance"]["first_public_date"] or "",
+        "statement_audit": (e["fidelity"] or {}).get("statement_audit", ""),
+        "feasibility": feasibility_label(e),
     }
+
+
+def feasibility_label(e):
+    f = e["feasibility"]
+    if not f:
+        return ""
+    return f.get("result") or ("checked" if f["definition_checked"] else "not_checked")
+
+
+def provenance_html(e):
+    p = e["provenance"]
+    rows = "".join(
+        "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+        % (esc(r["section"]), esc(r["date"]), esc(r.get("ai_systems")), esc(r["outcome"]))
+        for r in p.get("records", [])
+    )
+    out = "<p>Set by: <b>%s</b>. Literature: %s. First public: %s.<br>Where: %s</p>" % (
+        esc(p["setter_kind"]),
+        esc(p["literature_status"]),
+        esc(p["first_public_date"]),
+        esc(p["platform_or_paper"]),
+    )
+    if p.get("verification_state"):
+        out += "<p>Verification state (source's colour): %s</p>" % esc(p["verification_state"])
+    if p.get("basis"):
+        out += "<p class=muted>Basis: %s</p>" % esc(p["basis"])
+    if rows:
+        out += (
+            "<div class=wrap><table><tr><th>section</th><th>date</th><th>AI systems (count)</th><th>outcome</th></tr>%s</table></div>"
+            % rows
+        )
+    return out
+
+
+def fidelity_html(e):
+    f = e["fidelity"]
+    if not f:
+        return "<p class=muted>No formal statement recorded for this entry.</p>"
+    return "<p>Statement audit: <b>%s</b>. %s</p>" % (esc(f["statement_audit"]), esc(f["audit_note"]))
+
+
+def feasibility_html(e):
+    f = e["feasibility"]
+    if not f:
+        return "<p class=muted>Not applicable or not checked.</p>"
+    out = "<p>Definition checked: <b>%s</b>; result: <b>%s</b>" % (
+        "yes" if f["definition_checked"] else "no",
+        esc(f.get("result", "")),
+    )
+    if f.get("records_checked") is not None:
+        out += "; %d records checked, %d infeasible, %d not reproduced" % (
+            f["records_checked"],
+            f.get("records_infeasible", 0),
+            f.get("records_not_reproduced", 0),
+        )
+    out += ".</p>"
+    if f.get("check_source"):
+        out += "<p class=muted>Source: %s</p>" % esc(f["check_source"])
+    if f.get("note"):
+        out += "<p class=muted>%s</p>" % esc(f["note"])
+    return out
 
 
 def page(title, body):
@@ -146,6 +217,9 @@ def entry_page(e):
             if chain
             else "<p class=muted>None recorded.</p>"
         ),
+        "<h2>Provenance</h2>" + provenance_html(e),
+        "<h2>Statement fidelity</h2>" + fidelity_html(e),
+        "<h2>Definition-level feasibility</h2>" + feasibility_html(e),
         "<h2>Aliases</h2><ul>%s</ul>" % aliases,
         "<h2>Conflation note</h2><p>%s</p>" % esc(e["conflation_note"])
         if e["conflation_note"]
@@ -166,7 +240,7 @@ def export(entries, out):
         for e in entries:
             w.writerow(row_for_csv(e))
     rows = "".join(
-        '<tr><td><a href="entries/%s.html">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'
+        '<tr><td><a href="entries/%s.html">%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'
         % (
             esc(e["id"]),
             esc(e["id"]),
@@ -174,6 +248,8 @@ def export(entries, out):
             esc(e["direction"]),
             esc(e["current_value"]),
             esc(e["status"]),
+            esc(e["provenance"]["setter_kind"]),
+            esc(feasibility_label(e)),
         )
         for e in entries
     )
@@ -183,7 +259,7 @@ def export(entries, out):
                 "Extremal values registry",
                 "<h1>Extremal values registry</h1><p class=muted>%d entries. "
                 "An entry is a fact only when its verifier passes.</p><div class=wrap><table><tr><th>id</th>"
-                "<th>variant</th><th>dir</th><th>value</th><th>status</th></tr>%s</table></div>"
+                "<th>variant</th><th>dir</th><th>value</th><th>status</th><th>set by</th><th>feasibility</th></tr>%s</table></div>"
                 % (len(entries), rows),
             )
         )

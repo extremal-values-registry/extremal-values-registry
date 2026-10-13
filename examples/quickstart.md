@@ -9,7 +9,7 @@ python tools/validate.py
 ```
 
 ```
-322 entries, 1 with certificates, 231 claims: OK
+799 entries, 1 with certificates, 231 claims: OK
 ```
 
 Checks the schema, id uniqueness, alias uniqueness, the sha256 of every certificate, and
@@ -22,7 +22,7 @@ python tools/export.py --out dist
 ```
 
 ```
-exported 322 entries to dist
+exported 799 entries to dist
 ```
 
 Writes `dist/entries.csv`, `dist/index.html` and one page per entry in `dist/entries/`.

@@ -3,66 +3,227 @@
   "$id": "extremal-values-registry/entry/v0",
   "title": "Extremal values registry entry",
   "type": "object",
-  "required": ["id", "problem_family", "variant_name", "definition", "domain", "direction",
-               "units_or_normalisation", "current_value", "value_kind", "certificate", "source",
-               "superseded", "aliases", "status", "last_checked", "conflation_note", "notes"],
+  "required": [
+    "id",
+    "problem_family",
+    "variant_name",
+    "definition",
+    "domain",
+    "direction",
+    "units_or_normalisation",
+    "current_value",
+    "value_kind",
+    "certificate",
+    "source",
+    "superseded",
+    "aliases",
+    "status",
+    "last_checked",
+    "conflation_note",
+    "notes",
+    "provenance",
+    "fidelity",
+    "feasibility"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": {"type": "string", "pattern": "^EV-[0-9]{6}$"},
-    "problem_family": {"type": "string", "minLength": 1},
-    "variant_name": {"type": "string", "minLength": 1},
+    "id": {
+      "type": "string",
+      "pattern": "^EV-[0-9]{6}$"
+    },
+    "problem_family": {
+      "type": "string",
+      "minLength": 1
+    },
+    "variant_name": {
+      "type": "string",
+      "minLength": 1
+    },
     "definition": {
       "type": "object",
-      "required": ["text", "latex", "status"],
+      "required": [
+        "text",
+        "latex",
+        "status"
+      ],
       "additionalProperties": false,
       "properties": {
-        "text": {"type": "string", "minLength": 1},
-        "latex": {"type": "string"},
-        "status": {"enum": ["curated", "source_label"]}
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "latex": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "curated",
+            "source_label"
+          ]
+        }
       }
     },
-    "domain": {"type": "string"},
-    "direction": {"enum": ["min", "max", "unstated"]},
-    "units_or_normalisation": {"type": "string"},
-    "current_value": {"type": ["number", "string", "null"]},
-    "value_kind": {"enum": ["bound", "exact", "record"]},
+    "domain": {
+      "type": "string"
+    },
+    "direction": {
+      "enum": [
+        "min",
+        "max",
+        "unstated"
+      ]
+    },
+    "units_or_normalisation": {
+      "type": "string"
+    },
+    "current_value": {
+      "type": [
+        "number",
+        "string",
+        "null"
+      ]
+    },
+    "value_kind": {
+      "enum": [
+        "bound",
+        "exact",
+        "record",
+        "status"
+      ]
+    },
     "certificate": {
       "type": "object",
-      "required": ["file", "sha256", "verifier_command", "verifier_kind", "verified_date"],
+      "required": [
+        "file",
+        "sha256",
+        "verifier_command",
+        "verifier_kind",
+        "verified_date"
+      ],
       "additionalProperties": false,
       "properties": {
-        "file": {"type": ["string", "null"]},
-        "verifier_file": {"type": ["string", "null"]},
-        "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
-        "verifier_command": {"type": ["string", "null"]},
-        "verifier_kind": {"enum": ["exact", "numeric", "external"]},
-        "verified_date": {"type": ["string", "null"], "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
-        "value_pattern": {"type": ["string", "null"]},
-        "tolerance": {"type": ["number", "null"]}
+        "file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verifier_file": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "verifier_command": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verifier_kind": {
+          "enum": [
+            "exact",
+            "numeric",
+            "external"
+          ]
+        },
+        "verified_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+        },
+        "value_pattern": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "tolerance": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
       }
     },
     "source": {
       "type": "object",
-      "required": ["citation", "url", "date", "refereed"],
+      "required": [
+        "citation",
+        "url",
+        "date",
+        "refereed"
+      ],
       "additionalProperties": false,
       "properties": {
-        "citation": {"type": ["string", "null"]},
-        "url": {"type": ["string", "null"]},
-        "date": {"type": ["string", "null"]},
-        "refereed": {"type": "boolean"}
+        "citation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "url": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "date": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "refereed": {
+          "type": "boolean"
+        }
       }
     },
     "superseded": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["value", "source", "url", "date"],
+        "required": [
+          "value",
+          "source",
+          "url",
+          "date"
+        ],
         "additionalProperties": false,
         "properties": {
-          "value": {"type": ["number", "string"]},
-          "source": {"type": ["string", "null"]},
-          "url": {"type": ["string", "null"]},
-          "date": {"type": ["string", "null"]}
+          "value": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "date": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     },
@@ -70,22 +231,260 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["scheme", "id"],
+        "required": [
+          "scheme",
+          "id"
+        ],
         "additionalProperties": false,
         "properties": {
-          "scheme": {"enum": ["HorizonMath", "OptimizationConstants", "EinsteinArena",
-                              "AlphaEvolve-notebook", "AlphaEvolve-v2-paper", "other"]},
-          "id": {"type": "string", "minLength": 1},
-          "side": {"enum": ["lower", "upper"]},
-          "ranking_number": {"type": "string"},
-          "audit_table": {"type": "string"},
-          "audit_verdict": {"enum": ["CURRENT", "STALE", "STALE-LEADERBOARD", "UNCLEAR", "MALFORMED"]}
+          "scheme": {
+            "enum": [
+              "HorizonMath",
+              "OptimizationConstants",
+              "EinsteinArena",
+              "AlphaEvolve-notebook",
+              "AlphaEvolve-v2-paper",
+              "ErdosProblems",
+              "DS1",
+              "other"
+            ]
+          },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "side": {
+            "enum": [
+              "lower",
+              "upper"
+            ]
+          },
+          "ranking_number": {
+            "type": "string"
+          },
+          "audit_table": {
+            "type": "string"
+          },
+          "audit_verdict": {
+            "enum": [
+              "CURRENT",
+              "STALE",
+              "STALE-LEADERBOARD",
+              "UNCLEAR",
+              "MALFORMED"
+            ]
+          }
         }
       }
     },
-    "status": {"enum": ["current", "unclear", "malformed"]},
-    "last_checked": {"type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"},
-    "conflation_note": {"type": ["string", "null"]},
-    "notes": {"type": ["string", "null"]}
+    "status": {
+      "enum": [
+        "current",
+        "unclear",
+        "malformed"
+      ]
+    },
+    "last_checked": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "conflation_note": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "notes": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "setter_kind",
+        "literature_status",
+        "first_public_date",
+        "platform_or_paper"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "setter_kind": {
+          "enum": [
+            "human",
+            "ai_system",
+            "human_ai",
+            "unknown"
+          ]
+        },
+        "literature_status": {
+          "enum": [
+            "unknown",
+            "found_after",
+            "known_before"
+          ]
+        },
+        "first_public_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$"
+        },
+        "platform_or_paper": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verification_state": {
+          "enum": [
+            "full",
+            "partial",
+            "incorrect",
+            "unverified",
+            "not_applicable"
+          ]
+        },
+        "basis": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "section",
+              "date",
+              "outcome"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "section": {
+                "type": "string"
+              },
+              "date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "outcome": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "colour": {
+                "enum": [
+                  "green",
+                  "yellow",
+                  "red",
+                  "white",
+                  null
+                ]
+              },
+              "ai_systems": {
+                "type": "integer"
+              },
+              "literature": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "fidelity": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "statement_audit",
+        "audit_note"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "statement_audit": {
+          "enum": [
+            "none",
+            "self",
+            "independent"
+          ]
+        },
+        "audit_note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "formal_statement": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "feasibility": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "required": [
+        "definition_checked",
+        "check_source"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "definition_checked": {
+          "type": "boolean"
+        },
+        "check_source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "check_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?$"
+        },
+        "result": {
+          "enum": [
+            "feasible",
+            "infeasible",
+            "score_not_reproduced",
+            "not_checked"
+          ]
+        },
+        "records_checked": {
+          "type": "integer"
+        },
+        "records_infeasible": {
+          "type": "integer"
+        },
+        "records_not_reproduced": {
+          "type": "integer"
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    }
   }
 }

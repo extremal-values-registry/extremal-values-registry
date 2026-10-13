@@ -82,6 +82,16 @@ def next_id(entries):
     return "EV-%06d" % (max([int(e["id"][3:]) for e in entries] or [0]) + 1)
 
 
+def default_provenance(source):
+    """A proposal names its source, not how the value was found; the reviewer fills the rest."""
+    return {
+        "setter_kind": "unknown",
+        "literature_status": "unknown",
+        "first_public_date": source["date"],
+        "platform_or_paper": source["url"] or source["citation"],
+    }
+
+
 def build_entry(a, ident, entries, cert_rel, verifier_rel, sha):
     match = [e for e in entries if identity_key(e) == identity_key(ident)]
     if a.entry and (not match or match[0]["id"] != a.entry):
@@ -129,6 +139,8 @@ def build_entry(a, ident, entries, cert_rel, verifier_rel, sha):
             source=source,
             last_checked=a.date,
             status="current",
+            provenance=default_provenance(source),
+            feasibility=None,
         )
         e["notes"] = (old["notes"] + " | " if old.get("notes") else "") + note
         return e, "supersede"
@@ -146,6 +158,13 @@ def build_entry(a, ident, entries, cert_rel, verifier_rel, sha):
         last_checked=a.date,
         conflation_note=ident.get("conflation_note"),
         notes=note,
+        provenance=default_provenance(source),
+        fidelity=(
+            {"statement_audit": "none", "audit_note": "new entry; statement not audited yet"}
+            if e["definition"]["status"] == "curated"
+            else None
+        ),
+        feasibility=None,
     )
     return e, "new"
 

@@ -3,7 +3,8 @@
   python tools/badges.py [--entries data/entries.jsonl] [--out docs]
 
 Writes <out>/badge/<id>.json per entry, <out>/badge/table/<slug>.json per audited
-benchmark table, and <out>/badge/registry.json. Embed with
+benchmark table, <out>/badge/source/<slug>.json per ingested source table,
+<out>/badge/provenance.json and <out>/badge/registry.json. Embed with
 https://img.shields.io/endpoint?url=<PAGES_BASE>/badge/<id>.json. Stdlib only.
 """
 
@@ -27,12 +28,36 @@ def slug(name):
     return re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 
 
+SOURCE_SCHEMES = {"ErdosProblems": "erdos-ai-contributions-wiki", "DS1": "ds1-small-ramsey-numbers"}
+
+
 def entry_badge(e):
+    f = e.get("feasibility") or {}
+    bad = f.get("result") in ("infeasible", "score_not_reproduced")
     return badge(
         e["id"],
-        "%s · %s" % (e["status"], e["last_checked"]),
-        COLORS.get(e["status"], "lightgrey"),
+        "%s · %s%s" % (e["status"], e["last_checked"], " · " + f["result"].replace("_", " ") if bad else ""),
+        "red" if bad else COLORS.get(e["status"], "lightgrey"),
     )
+
+
+def source_badges(entries):
+    """One badge per ingested source table: entry count and how many are exact or resolved."""
+    out = {}
+    for scheme, name in SOURCE_SCHEMES.items():
+        es = [e for e in entries if any(a["scheme"] == scheme for a in e["aliases"])]
+        if not es:
+            continue
+        settled = sum(1 for e in es if e["value_kind"] == "exact" or e["current_value"] == "resolved")
+        word = "resolved" if scheme == "ErdosProblems" else "exact"
+        out[name] = badge(name, "%d entries · %d %s" % (len(es), settled, word), "blue")
+    return out
+
+
+def provenance_badge(entries):
+    ai = sum(1 for e in entries if e.get("provenance", {}).get("setter_kind") in ("ai_system", "human_ai"))
+    checked = sum(1 for e in entries if (e.get("feasibility") or {}).get("definition_checked"))
+    return badge("provenance", "%d AI-involved · %d definition-checked" % (ai, checked), "blue")
 
 
 def table_badges(entries):
@@ -66,6 +91,12 @@ def write_badges(entries, out):
     tables = table_badges(entries)
     for s, b in tables.items():
         dump(os.path.join(d, "table", s + ".json"), b)
+    sources = source_badges(entries)
+    if sources:
+        os.makedirs(os.path.join(d, "source"), exist_ok=True)
+    for s, b in sources.items():
+        dump(os.path.join(d, "source", s + ".json"), b)
+    dump(os.path.join(d, "provenance.json"), provenance_badge(entries))
     date = max(e["last_checked"] for e in entries) if entries else ""
     dump(
         os.path.join(d, "registry.json"),

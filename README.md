@@ -4,7 +4,7 @@
 
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.23326558-blue)](https://doi.org/10.5281/zenodo.23326558)
 ![License: CC BY 4.0 + MIT](https://img.shields.io/badge/license-CC%20BY%204.0%20%2B%20MIT-green)
-![entries: 322](https://img.shields.io/badge/entries-322-informational)
+![entries: 799](https://img.shields.io/badge/entries-799-informational)
 ![verified certificates: 1](https://img.shields.io/badge/verified%20certificates-1-success)
 
 One entry per problem **variant**: the exact definition, the current best value, the source,
@@ -17,7 +17,7 @@ instead of copying a number that goes stale.
 ```
 git clone https://github.com/extremal-values-registry/extremal-values-registry
 cd extremal-values-registry
-python tools/validate.py                       # 322 entries, 1 with certificates, 231 claims: OK
+python tools/validate.py                       # 799 entries, 1 with certificates, 231 claims: OK
 cd certificates/third_autocorrelation_abs_inside
 python -I verify.py construction.json          # exact check, under a second
 ```
@@ -51,12 +51,15 @@ Constants in Mathematics table, EinsteinArena, and two AlphaEvolve result sets):
 - Correcting **five** stale values on one public arena leaderboard reorders its top 10
   (**7 reversals**), and **57%** of recorded "beats" sat on stale rows.
 - **603 of 603** public records re-scored with their benchmarks' own validators were valid:
-  the records are fine, the reference values are what rot.
+  the records are fine, the reference values are what rot. Checked against the problems'
+  written definitions instead of the validators, some are not: see `feasibility` below.
 - Classical OR libraries (TSPLIB, QAPLIB, CVRPLIB, MIPLIB, OR-Library) showed **0 stale rows
   of 158**. The decay is specific to young AI-era tables, which is why they need a registry.
 
-This registry holds **322 entries** (290 current, 18 unclear, 14 malformed) and **231 priority
-claims** linked to entry ids. To audit your own table, use
+This registry holds **799 entries** (735 current, 50 unclear, 14 malformed) and **231 priority
+claims** linked to entry ids: the 322 audited benchmark variants, 405 Erdős problems from the
+AI-contributions wiki (frozen 2026-06-30) and the 72 cells of the classical two-colour Ramsey
+table R(k,l), k <= l <= 15, from Radziszowski's survey DS1. To audit your own table, use
 the sibling [`freshcheck`](https://github.com/extremal-values-registry/freshcheck) repository (same owner; the registry accepts its row format via `tools/check_freshness.py`).
 
 ## What makes an entry a fact
@@ -64,9 +67,22 @@ the sibling [`freshcheck`](https://github.com/extremal-values-registry/freshchec
 **An entry is a fact only when its verifier passes. Until then it is a sourced claim.**
 Today one entry carries an exact certificate: the signed third-autocorrelation constant,
 upper bound 1.4688 -> 1.4630716, checked with `python -I verify.py construction.json`
-(exact rational arithmetic, under a second). The other 321 rest on a cited primary source
+(exact rational arithmetic, under a second). The other 798 rest on a cited primary source
 with a verbatim quote (`verifier_kind: external`). A superseding value must be strictly
 better in the entry's direction, for the same variant.
+
+## Provenance, fidelity, feasibility
+
+Every entry also records **who set the value** (`provenance`: human, AI system, human with AI,
+or unknown; whether comparable literature was unknown, found afterwards or known before, in the
+taxonomy of the Erdős-problems AI-contributions wiki; first public date; where), **whether the
+formal statement was audited** (`fidelity`: none, self, independent) and, for leaderboard-derived
+values, **whether the records satisfy the written definition** (`feasibility`). For the twelve
+EinsteinArena-derived entries every public record in the arena's bulk endpoint
+(`https://einsteinarena.com/api/solutions/best?problem_id=N`) was re-checked against the
+problem's definition, independently of the platform's scorer: the rank-1 Tammes (n=50) record
+fails it (its points sit inside the sphere, under the scorer's norm clamp), and 29 of 52
+prime-number-theorem records exceed the constraint the definition sets. See `SCHEMA.md`.
 
 ## Known conflations
 
@@ -83,9 +99,11 @@ under `docs/badge/`, so a benchmark README can show whether the value it uses is
 
 | file | message |
 |---|---|
-| `badge/<id>.json` | `current · 2026-10-12` (green current, yellow unclear, red malformed) |
+| `badge/<id>.json` | `current · 2026-10-12` (green current, yellow unclear, red malformed or a record that fails its definition) |
 | `badge/table/<slug>.json` | `N/M current · <date>` for one audited benchmark table |
-| `badge/registry.json` | `322 entries · <date>` |
+| `badge/source/<slug>.json` | `N entries · M resolved/exact` for an ingested source table |
+| `badge/provenance.json` | `N AI-involved · M definition-checked` |
+| `badge/registry.json` | `799 entries · <date>` |
 
 Replace `<PAGES_BASE>` with the registry's GitHub Pages URL (it changes when the repository
 moves to its organisation, so it is not hard-coded here):

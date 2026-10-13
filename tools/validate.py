@@ -5,7 +5,8 @@
 Checks: every entry against schema.json; ids unique and EV-NNNNNN; aliases not shared by two
 entries; claims link to existing ids; every certificate file exists and its sha256 matches;
 every verifier_command runs on its certificate and prints the registered value (within the
-entry's tolerance; exact certificates default to 1e-12). Exit 0 when clean, 1 otherwise.
+entry's tolerance; exact certificates default to 1e-12); the provenance, fidelity and
+feasibility rules in SCHEMA.md (see field_rules). Exit 0 when clean, 1 otherwise.
 """
 
 import argparse
@@ -52,6 +53,42 @@ def run_verifier(entry, root):
     return None
 
 
+STATUS_VALUES = ("resolved", "open")
+
+
+def field_rules(e):
+    """Cross-field rules that schema.json cannot express."""
+    errs = []
+    if e.get("value_kind") == "status":
+        if e.get("current_value") not in STATUS_VALUES:
+            errs.append("status value must be one of %r" % (STATUS_VALUES,))
+        if e.get("direction") != "unstated":
+            errs.append("status value with direction %r" % e.get("direction"))
+    elif e.get("current_value") in STATUS_VALUES:
+        errs.append("status value %r without value_kind status" % e["current_value"])
+    d = e.get("definition") or {}
+    if d.get("status") == "curated" and e.get("fidelity") is None:
+        errs.append("curated definition without a fidelity record")
+    f = e.get("feasibility")
+    if f:
+        if f.get("definition_checked"):
+            if not f.get("check_source"):
+                errs.append("feasibility checked without check_source")
+            if "result" not in f:
+                errs.append("feasibility checked without result")
+        elif f.get("result") not in (None, "not_checked"):
+            errs.append("feasibility result %r without definition_checked" % f["result"])
+        n = f.get("records_checked")
+        if n is not None and f.get("records_infeasible", 0) + f.get("records_not_reproduced", 0) > n:
+            errs.append("feasibility counts exceed records_checked")
+    p = e.get("provenance") or {}
+    for r in p.get("records", []):
+        if r.get("date") and p.get("first_public_date") and r["date"] < p["first_public_date"]:
+            errs.append("provenance record dated before first_public_date")
+            break
+    return errs
+
+
 def validate(entries, claims, root, run=True):
     with open(SCHEMA, encoding="utf-8") as fh:
         schema = json.load(fh)
@@ -59,6 +96,7 @@ def validate(entries, claims, root, run=True):
     for e in entries:
         eid = e.get("id", "?")
         errs += ["%s %s" % (eid, x) for x in check(e, schema)]
+        errs += ["%s %s" % (eid, x) for x in field_rules(e)]
         if eid in ids:
             errs.append("%s duplicate id" % eid)
         ids.add(eid)
