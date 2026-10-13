@@ -9,7 +9,7 @@ description = "A registry of best-known values for extremal problems"
 readme = "README.md"
 requires-python = ">=3.12"
 license = {text = "MIT (code); CC-BY-4.0 (data, see LICENSE-DATA)"}
-authors = [{name = "Advatiya Thalluri"}]
+authors = [{name = "Extremal Values Registry maintainers"}]
 dependencies = []
 
 [project.optional-dependencies]

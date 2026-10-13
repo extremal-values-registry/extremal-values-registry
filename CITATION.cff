@@ -2,17 +2,14 @@ cff-version: 1.2.0
 message: "If you use this registry, please cite it as below."
 title: "Extremal Values Registry"
 version: 0.1.0
-doi: 10.5281/zenodo.23326559
 date-released: 2026-10-12
 license:
   - MIT
   - CC-BY-4.0
 authors:
-  - family-names: Thalluri
-    given-names: Advatiya
+  - name: "Extremal Values Registry maintainers"
 identifiers:
   - type: doi
-    value: 10.5281/zenodo.23326558
     description: "Concept DOI, all versions"
 repository-code: "https://github.com/extremal-values-registry/extremal-values-registry"
 abstract: "A registry of best-known values for extremal problems: one entry per problem variant, with definition, current value, source, superseded chain and verifier."

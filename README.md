@@ -2,7 +2,6 @@
 
 **A quarter of the "best known" values in AI-math benchmarks are already beaten. This registry tracks the real frontier.**
 
-[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.23326558-blue)](https://doi.org/10.5281/zenodo.23326558)
 ![License: CC BY 4.0 + MIT](https://img.shields.io/badge/license-CC%20BY%204.0%20%2B%20MIT-green)
 ![entries: 1034](https://img.shields.io/badge/entries-1034-informational)
 ![verified certificates: 1](https://img.shields.io/badge/verified%20certificates-1-success)
@@ -55,7 +54,6 @@ by the verifier result, not by the maintainer. Releases: `CHANGELOG.md`; a relea
 
 ## Why it exists
 
-Our published audit (https://doi.org/10.5281/zenodo.23324073) checked five "best known"
 tables used to evaluate and report AI-driven mathematics (HorizonMath, the Optimization
 Constants in Mathematics table, EinsteinArena, and two AlphaEvolve result sets):
 
@@ -148,24 +146,19 @@ a benchmark or platform can self-certify entries (`"standard_version": "1.0"`).
 
 Full guide for the registry, an entry and a verdict: [`docs/CITING.md`](docs/CITING.md).
 
-Plain: Thalluri, A. (2026). *Extremal Values Registry* (v0.1.0). Zenodo.
-https://doi.org/10.5281/zenodo.23326559 (concept DOI, always the newest version:
-https://doi.org/10.5281/zenodo.23326558). To cite one entry: "Extremal Values Registry,
+Plain: Extremal Values Registry maintainers (2026). *Extremal Values Registry* (v0.1.0). Zenodo.
 EV-000004 (v0.1.0)". Ids are permanent.
 
 ```bibtex
-@dataset{thalluri2026extremal,
-  author    = {Thalluri, Advatiya},
+@dataset{evr2026,
+  author    = {{Extremal Values Registry maintainers}},
   title     = {Extremal Values Registry},
   year      = {2026},
   version   = {0.1.0},
   publisher = {Zenodo},
-  doi       = {10.5281/zenodo.23326559},
-  url       = {https://doi.org/10.5281/zenodo.23326559}
 }
 ```
 
-The derived audit data: https://doi.org/10.5281/zenodo.23324073. A machine-readable
 `CITATION.cff` is included.
 
 ## How to propose an entry or supersession
