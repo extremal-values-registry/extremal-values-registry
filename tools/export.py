@@ -235,7 +235,7 @@ def export(entries, out):
     with open(
         os.path.join(out, "entries.csv"), "w", encoding="utf-8", newline=""
     ) as fh:
-        w = csv.DictWriter(fh, fieldnames=CSV_COLUMNS)
+        w = csv.DictWriter(fh, fieldnames=CSV_COLUMNS, lineterminator="\n")  # LF, as .gitattributes stores it
         w.writeheader()
         for e in entries:
             w.writerow(row_for_csv(e))

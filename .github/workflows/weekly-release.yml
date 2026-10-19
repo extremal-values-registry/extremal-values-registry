@@ -37,12 +37,14 @@ jobs:
           VERSION="v$(date -u +%Y.%m.%d)"
           git config user.name "Extremal Values Registry maintainers"
           git config user.email "maintainers@extremal-values-registry.invalid"
-          if [ -n "$(git status --porcelain)" ]; then
-            git add -A
+          # Stage first, then test what is staged: a file that only differs in line endings shows as modified in
+          # `git status` but stages to nothing, and `git commit` with nothing staged exits 1.
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes to commit"
+          else
             git commit -m "Weekly export ${VERSION}"
             git push origin "HEAD:${GITHUB_REF_NAME}"
-          else
-            echo "no changes to commit"
           fi
           git fetch --tags --force
           if git rev-parse -q --verify "refs/tags/${VERSION}" >/dev/null; then
